@@ -1,0 +1,18 @@
+id: D-4
+name: 儿科 · 再生成 程序路由找节（方案 B，禁止 LLM 路由）
+baseline_case: D-3-pediatrics-fever.yaml
+regenerate:
+  base_revision_id: rev_ped_001
+  trigger: chat_refine
+  user_message: 把现病史里最高体温改成40度
+  options:
+    locked_sections: []
+    allow_ai_override_locked: false
+assertions:
+  - router_impl: section_router.rules
+  - no_llm_for_routing: true
+  - ai_calls_max: 1
+  - router_target_sections: [present_illness]
+  - only_sections_patched: [present_illness]
+  - present_illness_contains: ["40"]
+  - new_revision_parent: rev_ped_001

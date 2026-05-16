@@ -1,0 +1,9 @@
+id: D-5
+name: 胸外科 · 节超时降级（可选自动化）
+inject:
+  section_timeout: present_illness
+assertions:
+  - sse_event: section_failed
+  - section_status: degraded
+  - template_or_verbatim_preserved: true
+  - section_retry_succeeds: true

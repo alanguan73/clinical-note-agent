@@ -1,32 +1,28 @@
 #!/usr/bin/env bash
 # 在本机终端执行：bash scripts/push-to-github.sh
 set -euo pipefail
-cd "$(dirname "$0")/.."
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
 
 REPO_SLUG="alanguan73/clinical-note-agent"
-REMOTE="https://github.com/${REPO_SLUG}.git"
+REMOTE_SSH="git@github.com:${REPO_SLUG}.git"
+REMOTE_HTTPS="https://github.com/${REPO_SLUG}.git"
 
-rm -rf .git
-git init -b main
-git config user.name "alanguan73"
-git config user.email "alanguan73@users.noreply.github.com"
+git config user.name "alanguan73" 2>/dev/null || true
+git config user.email "alanguan73@users.noreply.github.com" 2>/dev/null || true
 
-git add README.md .gitignore docs tests scripts
-git commit -m "$(cat <<'EOF'
-docs: 智能病历辅助生成系统产品规格 v0.3
-
-含完整产品文档、安全专章、金样例 YAML 与 README。
-EOF
-)"
-
-if command -v gh >/dev/null 2>&1; then
-  gh repo create "${REPO_SLUG}" --public --source=. --remote=origin --push
-else
-  echo "未检测到 gh。请先在 GitHub 创建空仓库: https://github.com/new?name=clinical-note-agent"
-  echo "创建后按回车继续..."
-  read -r
-  git remote add origin "${REMOTE}" 2>/dev/null || git remote set-url origin "${REMOTE}"
-  git push -u origin main
+git add -A
+if ! git diff --cached --quiet 2>/dev/null; then
+  git commit -m "${1:-docs: update clinical-note-agent specs}"
 fi
 
-echo "完成: https://github.com/${REPO_SLUG}"
+git remote add origin "${REMOTE_SSH}" 2>/dev/null || git remote set-url origin "${REMOTE_SSH}"
+
+if ssh -o BatchMode=yes -o ConnectTimeout=15 -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+  git push -u origin main
+else
+  echo "SSH 未就绪，请先: ssh -T git@github.com"
+  exit 1
+fi
+
+echo "已推送: https://github.com/${REPO_SLUG}"

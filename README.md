@@ -2,6 +2,8 @@
 
 院内病历辅助生成系统的产品与技术规格，路线 **C**：事实层 + 模板 + 合规硬约束。
 
+**GitHub**：https://github.com/alanguan73/clinical-note-agent
+
 ## 文档
 
 | 文件 | 说明 |
@@ -18,6 +20,10 @@
 - 版本：**v0.4**（架构方案 B）
 - 首期：住院入院记录（儿科、胸外科试点）
 - 司法区：中国大陆（默认策略，院方可覆盖）
+
+## 开发与推送
+
+见 [docs/DEV-git-push.md](docs/DEV-git-push.md)（SSH、Cursor Agent 自动 push 说明）。
 
 ## 许可
 

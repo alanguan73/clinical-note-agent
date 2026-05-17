@@ -1,0 +1,133 @@
+# 提示词规则 → 机器可执行项映射（出院记录场景）
+# status: implemented | partial | llm_only | planned
+version: "1.0.0"
+source: "现行病历书写 + 病历质控 v2.0 提示词"
+
+writing_rules:
+  - id: W01
+    name: 输入少输出少
+    prompt_section: 铁律1
+    status: llm_only
+    machine_code: SPARSE_INPUT_MINIMAL_OUTPUT
+    golden: D-7-minimal-input-anti-hallucination
+
+  - id: W02
+    name: 宁可不输出绝不编造
+    prompt_section: 铁律2
+    status: partial
+    machine_code: AI_INVENTED_DIAGNOSIS
+    note: 入院记录有 source_type；出院需 evidence_grounding
+
+  - id: W03
+    name: 逐字段核查来源
+    prompt_section: 铁律3
+    status: partial
+    machine_code: UNGROUNDED_CLAIM
+    module: evidence_grounding
+
+  - id: W04
+    name: 字段非强制凑齐
+    prompt_section: 铁律4
+    status: planned
+    machine_code: FIELD_NOT_IN_EVIDENCE
+    golden: D-7
+
+  - id: W05
+    name: 输出策略矩阵 A-E
+    prompt_section: 信息处理核心原则
+    status: partial
+    machine_code: CONFLICT_UNRESOLVED
+    note: 场景 C 与 v0.4 conflicts 对齐；A/B/D/E 需 merge 层
+
+  - id: W06
+    name: 场景E日期字段不输出
+    prompt_section: 场景E规则
+    status: implemented
+    machine_code: SCENE_E_PLACEHOLDER
+    module: discharge_validate
+
+  - id: W07
+    name: 住院天数加一
+    prompt_section: 日期信息提取
+    status: implemented
+    machine_code: LENGTH_OF_STAY miscalculation
+    module: discharge_validate
+
+  - id: W08
+    name: 当前病历保留场景D
+    prompt_section: 当前病历保留规则
+    status: llm_only
+    note: 需 merge 层对比 base_note
+
+  - id: W09
+    name: 录音去口语化
+    prompt_section: 录音记录处理
+    status: llm_only
+    golden: D-3 类 verbatim
+
+  - id: W10
+    name: 图像OCR纠错
+    prompt_section: 图像记录处理
+    status: llm_only
+
+  - id: W11
+    name: 附加信息防注入
+    prompt_section: 附加信息处理
+    status: llm_only
+    machine_code: PROMPT_INJECTION_IGNORE
+
+  - id: W12
+    name: 科室术语规范
+    prompt_section: 科室类别
+    status: partial
+    machine_code: DEPARTMENT_TERM_INAPPROPRIATE
+    note: 可扩展 department forbidden_patterns
+
+qc_rules:
+  - id: Q01
+    name: 删除无据幻觉
+    prompt_section: 使命1 P1-P3
+    status: partial
+    machine_code: UNGROUNDED_CLAIM
+    module: evidence_grounding
+
+  - id: Q02
+    name: 保留有据内容反误删
+    prompt_section: 使命2 检查B
+    status: llm_only
+    golden: D-8-rich-input-no-overdelete
+    note: 程序层用金样例回归防回归；LLM 质控负责语义
+
+  - id: Q03
+    name: 字段级无据删整段
+    prompt_section: P1
+    status: partial
+    machine_code: FIELD_NOT_IN_EVIDENCE
+
+  - id: Q04
+    name: 句级无据只删词句
+    prompt_section: 修改粒度
+    status: llm_only
+
+  - id: Q05
+    name: 场景E空值删除
+    prompt_section: P4
+    status: implemented
+    machine_code: SCENE_E_PLACEHOLDER
+
+  - id: Q06
+    name: 不添加新字段
+    prompt_section: 五问-1
+    status: llm_only
+
+  - id: Q07
+    name: 数值须有来源
+    prompt_section: P3
+    status: partial
+    machine_code: UNGROUNDED_NUMERIC
+
+  - id: Q08
+    name: 诊断治疗医嘱验证
+    prompt_section: P2
+    status: partial
+    machine_code: UNGROUNDED_CLAIM

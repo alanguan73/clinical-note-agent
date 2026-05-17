@@ -1,0 +1,26 @@
+template_id: thoracic_trauma_mva
+template_version: "3"
+document_type: inpatient_admission
+department_id: thoracic_surgery
+sections:
+  - key: chief_complaint
+    required: true
+    default_text: "外伤后胸痛待查。"
+  - key: present_illness
+    required: true
+    default_text: "患者因外伤就诊，具体经过待补充。"
+  - key: past_history
+    required: true
+    default_text: "否认高血压、糖尿病等慢性病史。"
+  - key: physical_exam
+    required: true
+    default_text: "体格检查待补充。"
+  - key: specialist_exam
+    required: true
+    default_text: "专科情况待补充。"
+  - key: auxiliary_exam
+    required: true
+    default_text: "辅助检查待补充。"
+  - key: preliminary_diagnosis
+    required: false
+    default_text: ""

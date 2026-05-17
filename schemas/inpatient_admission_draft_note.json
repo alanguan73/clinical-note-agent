@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clinical-note-agent/schemas/inpatient_admission_draft_note.json",
+  "title": "InpatientAdmissionDraftNote",
+  "type": "object",
+  "additionalProperties": true,
+  "propertyNames": {
+    "pattern": "^[a-z][a-z0-9_]*$"
+  },
+  "patternProperties": {
+    "^[a-z][a-z0-9_]*$": {
+      "$ref": "draft_note_section.json"
+    }
+  }
+}

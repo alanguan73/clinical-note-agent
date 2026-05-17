@@ -1,0 +1,7 @@
+# 科室增量质控 — 胸外科
+department_id: thoracic_surgery
+version: "1.0.0"
+
+# 专科模板常含 specialist_exam
+extra_required_sections:
+  - specialist_exam

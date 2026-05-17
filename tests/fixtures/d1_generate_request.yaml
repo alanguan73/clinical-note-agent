@@ -1,0 +1,23 @@
+document_type: inpatient_admission
+department_id: thoracic_surgery
+template:
+  template_id: thoracic_trauma_mva
+  template_version: "3"
+evidence:
+  asr_final_text: "查体：右侧呼吸音减弱，无皮下气肿。初步诊断考虑肋骨骨折。"
+  asr_metadata:
+    speaker: physician_only
+    mode: dictation
+  labs_struct:
+    - code: WBC
+      name: 白细胞
+      value: "12.5"
+      unit: "10^9/L"
+      flag: high
+      source_ref: lis:ord_1001
+  imaging_struct:
+    - modality: CT
+      body_part: 胸部
+      findings: 右侧第5肋骨折
+      impression: 右侧肋骨骨折
+      source_ref: pacs:stu_2001

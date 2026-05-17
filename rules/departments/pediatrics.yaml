@@ -1,0 +1,15 @@
+# 科室增量质控 — 儿科
+department_id: pediatrics
+version: "1.0.0"
+
+hidden_sections:
+  - marital_reproductive_history
+
+# 与患儿年龄明显矛盾的表述（warning）
+forbidden_patterns:
+  - pattern: "饮酒史\\d+年"
+    code: PEDIATRICS_TERM_INAPPROPRIATE
+    message: 儿科病历中出现成人饮酒史表述，请核对。
+  - pattern: "吸烟\\d+年"
+    code: PEDIATRICS_TERM_INAPPROPRIATE
+    message: 儿科病历中出现成人吸烟史表述，请核对。

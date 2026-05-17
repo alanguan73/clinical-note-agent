@@ -1,0 +1,23 @@
+template_id: ped_fever_admission
+template_version: "2"
+document_type: inpatient_admission
+department_id: pediatrics
+sections:
+  - key: chief_complaint
+    required: true
+    default_text: "发热待查。"
+  - key: present_illness
+    required: true
+    default_text: "患儿发热，具体热程待补充。"
+  - key: past_history
+    required: true
+    default_text: "既往体健。"
+  - key: physical_exam
+    required: true
+    default_text: "体格检查待补充。"
+  - key: auxiliary_exam
+    required: true
+    default_text: "辅助检查待补充。"
+  - key: preliminary_diagnosis
+    required: false
+    default_text: ""

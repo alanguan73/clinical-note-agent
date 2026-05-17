@@ -1,0 +1,32 @@
+# 提示词案例1：仅主诉 → 不得编造完整出院记录
+id: D-7
+name: 出院记录 · 极少输入反幻觉
+document_type: discharge_summary
+source: 病历书写铁律1 + 质控案例1
+
+evidence_corpus: |
+  [[当前病历]]
+  主诉::头痛、头晕、发热和咽痛的症状
+
+writing_ai_output_bad:
+  入院情况: "患者因头痛、头晕、发热和咽痛就诊。"
+  入院诊断: "1. 上呼吸道感染？\n2. 头痛查因\n3. 发热查因"
+  诊疗经过: "入院后予对症支持治疗，监测体温及症状变化。"
+  出院情况: "患者头痛、头晕、发热及咽痛症状较前缓解。"
+  出院诊断: "1. 上呼吸道感染？"
+  出院医嘱: "1. 注意休息，多饮水。"
+
+writing_ai_output_good:
+  入院情况: "患者诉头痛、头晕、发热和咽痛。"
+
+evidence_flags:
+  admission_date: false
+  discharge_date: false
+  length_of_stay: false
+
+assertions:
+  - sparse_input_excess_output_on_bad: true
+  - ungrounded_diagnosis_on_bad: true
+  - compliance_errors_on_bad: true
+  - compliance_errors_empty_on_good: true
+  - good_output_max_clinical_fields: 1

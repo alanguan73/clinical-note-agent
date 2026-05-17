@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "clinical-note-agent"
+version = "0.4.0"
+description = "住院病历辅助生成 — 质控与合规校验（方案 B）"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "jsonschema>=4.21",
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+]
+api = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.27",
+]
+
+[project.scripts]
+note-qc = "clinical_note_agent.qc.cli:main"
+note-pipeline = "clinical_note_agent.pipeline.cli:main"
+note-stream = "clinical_note_agent.orchestrator.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/clinical_note_agent"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

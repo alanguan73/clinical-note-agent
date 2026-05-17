@@ -1,0 +1,43 @@
+# 出院记录 — 由现行提示词沉淀的规则包（购物车模式）
+# 对应：病历书写提示词 + 病历质控 v2.0
+version: "1.0.0"
+document_type: discharge_summary
+
+# 标准字段（书写 AI 最多 10 项；场景 E 下可缺省）
+all_fields:
+  - admission_date      # 入院日期
+  - discharge_date      # 出院日期
+  - length_of_stay      # 住院天数
+  - admission_status    # 入院情况
+  - admission_diagnosis # 入院诊断
+  - treatment_course    # 诊疗经过
+  - discharge_status    # 出院情况
+  - discharge_diagnosis # 出院诊断
+  - discharge_orders    # 出院医嘱
+
+# 场景 E：全部原始数据 + 当前病历均无 → 禁止输出 key（勿用空串/待补/不详）
+scene_e_skip_if_absent_in_evidence:
+  - admission_date
+  - discharge_date
+  - length_of_stay
+
+# 禁止作为字段值的占位（会覆盖应用层有效数据）
+forbidden_placeholders:
+  - "[日期待补]"
+  - "待补"
+  - "信息不详"
+  - "不详"
+  - "N/A"
+  - "NA"
+
+# 有入院+出院日期时必须校验的公式：(出院-入院)+1
+length_of_stay_formula: "(discharge_date - admission_date) + 1 days"
+
+# 诊断/医嘱类字段：须可追溯到证据（程序校验见 evidence_grounding）
+physician_or_evidence_required_fields:
+  - admission_diagnosis
+  - discharge_diagnosis
+  - discharge_orders
+
+# 输入极少时：不得强行凑齐字段（与 REQUIRED 相反，由金样例 D-7 约束）
+sparse_input_max_fields_hint: 3

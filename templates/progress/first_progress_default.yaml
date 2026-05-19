@@ -1,0 +1,18 @@
+template_id: first_progress_default
+template_version: "1"
+document_type: first_progress_note
+department_id: general
+
+sections:
+  - key: course_summary
+    title: 病例特点
+    required: true
+    default_text: ""
+  - key: diagnosis_discussion
+    title: 拟诊讨论
+    required: true
+    default_text: ""
+  - key: treatment_plan
+    title: 诊疗计划
+    required: true
+    default_text: ""

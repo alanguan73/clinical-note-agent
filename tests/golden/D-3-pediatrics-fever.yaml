@@ -1,0 +1,26 @@
+id: D-3
+name: 儿科 · 发热入院
+document_type: inpatient_admission
+department_id: pediatrics
+input:
+  template:
+    template_id: ped_fever_admission
+    template_version: "2"
+  evidence:
+    asr_final_text: "患儿发热两天，最高39度，无惊厥。既往体健。"
+    asr_metadata:
+      speaker: physician_only
+      mode: dictation
+    labs_struct:
+      - code: CRP
+        name: C反应蛋白
+        value: "28"
+        unit: mg/L
+        flag: high
+        source_ref: lis:ord_3001
+assertions:
+  - present_illness_contains: ["发热", "39"]
+  - past_history_from_dictation: true
+  - auxiliary_exam_has_source_refs: true
+  - no_invented_labs: true
+  - verbatim_preserved: true

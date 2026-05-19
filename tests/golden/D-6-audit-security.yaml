@@ -1,0 +1,8 @@
+id: D-6
+name: 审计抽样（安全）
+after_case: D-1-thoracic-trauma-standard.yaml
+assertions:
+  - audit_log_has_action: generate
+  - audit_log_fields: [note_id, revision_id, prompt_hash, patient_ref_hash]
+  - log_no_plaintext_patient_name: true
+  - log_no_full_asr_body: true

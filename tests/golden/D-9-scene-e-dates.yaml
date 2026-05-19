@@ -1,0 +1,25 @@
+# 场景 E：无日期证据时不得输出占位日期字段
+id: D-9
+name: 出院记录 · 场景E日期
+document_type: discharge_summary
+
+evidence_corpus: |
+  [[当前病历]]
+  入院情况::患者诉胸痛2小时
+
+writing_ai_output_bad:
+  入院日期: "[日期待补]"
+  出院日期: ""
+  入院情况: "患者诉胸痛2小时。"
+
+writing_ai_output_good:
+  入院情况: "患者诉胸痛2小时。"
+
+evidence_flags:
+  admission_date: false
+  discharge_date: false
+  length_of_stay: false
+
+assertions:
+  - scene_e_placeholder_on_bad: true
+  - compliance_errors_empty_on_good: true

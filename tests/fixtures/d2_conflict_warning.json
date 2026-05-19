@@ -1,0 +1,66 @@
+{
+  "document_type": "inpatient_admission",
+  "department_id": "thoracic_surgery",
+  "template": {
+    "template_id": "thoracic_trauma_mva",
+    "template_version": "3",
+    "sections": [
+      { "key": "chief_complaint", "required": true },
+      { "key": "present_illness", "required": true },
+      { "key": "past_history", "required": true },
+      { "key": "physical_exam", "required": true },
+      { "key": "specialist_exam", "required": true },
+      { "key": "auxiliary_exam", "required": true }
+    ]
+  },
+  "draft_note": {
+    "chief_complaint": {
+      "text": "车祸伤后胸痛2小时。",
+      "source_refs": ["asr:final_1"],
+      "source_type": "physician_verbatim",
+      "section_status": "ok"
+    },
+    "present_illness": {
+      "text": "患者于2小时前因交通事故受伤。",
+      "source_refs": ["asr:final_2"],
+      "source_type": "llm_patch",
+      "section_status": "ok"
+    },
+    "past_history": {
+      "text": "否认慢性病史。",
+      "source_refs": ["template:thoracic_trauma_mva"],
+      "source_type": "template_default",
+      "section_status": "ok"
+    },
+    "physical_exam": {
+      "text": "右侧呼吸音减弱。",
+      "source_refs": ["asr:final_3"],
+      "source_type": "physician_verbatim",
+      "section_status": "ok"
+    },
+    "specialist_exam": {
+      "text": "专科查体未见明显异常。",
+      "source_refs": ["template:thoracic_trauma_mva"],
+      "source_type": "template_default",
+      "section_status": "ok"
+    },
+    "auxiliary_exam": {
+      "text": null,
+      "display_mode": "conflict_pending",
+      "candidates": [
+        { "source": "structured", "display": "12.5×10^9/L" },
+        { "source": "dictation", "display": "一万二" }
+      ],
+      "section_status": "ok"
+    }
+  },
+  "conflicts": [
+    {
+      "conflict_id": "c1",
+      "field": "auxiliary_exam.wbc",
+      "resolution": "pending",
+      "structured": { "value": "12.5", "source_ref": "lis:ord_1001" },
+      "dictation": { "verbatim": "白细胞一万二", "source_ref": "asr:final_7" }
+    }
+  ]
+}

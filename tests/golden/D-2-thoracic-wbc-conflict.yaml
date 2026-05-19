@@ -1,0 +1,13 @@
+id: D-2
+name: 胸外科 · LIS vs 口述 WBC 冲突
+extends: D-1-thoracic-trauma-standard.yaml
+input_overrides:
+  evidence:
+    asr_final_text: "查体：右侧呼吸音减弱，无皮下气肿。初步诊断考虑肋骨骨折。白细胞一万二。"
+assertions:
+  - conflicts_pending: true
+  - conflict_field_contains: wbc
+  - display_mode_conflict_pending: auxiliary_exam
+  - draft_save_allowed: true
+  - sign_allowed_with_strong_warning: true
+  - blocks_sign: false

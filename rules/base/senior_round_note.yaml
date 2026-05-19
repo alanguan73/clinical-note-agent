@@ -1,0 +1,14 @@
+# 上级医师查房记录
+version: "1.0.0"
+document_type: senior_round_note
+
+default_required_sections:
+  - round_record
+  - round_opinion
+  - treatment_plan
+
+physician_only_sections:
+  - round_opinion
+  - treatment_plan
+
+sections_requiring_source_refs: []

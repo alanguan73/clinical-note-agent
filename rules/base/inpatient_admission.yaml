@@ -1,0 +1,20 @@
+# 病案质控规则包 — 住院入院记录（首期）
+version: "1.0.0"
+document_type: inpatient_admission
+
+# 附录 B：首期默认必填（personal_history 等由模板 sections 覆盖）
+default_required_sections:
+  - chief_complaint
+  - present_illness
+  - past_history
+  - physical_exam
+  - auxiliary_exam
+
+# 仅允许医师来源的章节（AI 不得推断）
+physician_only_sections:
+  - preliminary_diagnosis
+  - treatment_plan
+
+# 含结构化检验/检查时建议有 source_refs
+sections_requiring_source_refs:
+  - auxiliary_exam

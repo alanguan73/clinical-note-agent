@@ -1,0 +1,14 @@
+# 首次病程记录
+version: "1.0.0"
+document_type: first_progress_note
+
+default_required_sections:
+  - course_summary
+  - diagnosis_discussion
+  - treatment_plan
+
+physician_only_sections:
+  - diagnosis_discussion
+  - treatment_plan
+
+sections_requiring_source_refs: []

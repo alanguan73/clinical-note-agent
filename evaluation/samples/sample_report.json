@@ -1,0 +1,349 @@
+{
+  "plan_id": "discharge-admission-qc-baseline",
+  "plan_version": "2026-05-19",
+  "plan_name": "出院入院质控基线评估",
+  "scope": [
+    "discharge_summary",
+    "inpatient_admission"
+  ],
+  "architecture": [
+    "evidence_corpus → build_evidence_corpus()",
+    "入院 program_qc → run_compliance()（Schema + rules + RAG）",
+    "出院 program_qc → run_discharge_compliance()（validate + grounding）",
+    "出院 llm_qc → run_llm_qc_stage()（句级语义，本计划不执行 LLM）",
+    "出院 final_program_qc → 终审程序 QC"
+  ],
+  "pass_threshold": 1.0,
+  "overall_pass_rate": 1.0,
+  "passed": true,
+  "executive_summary": "达标：6/6 项核心指标通过，11/11 条场景通过（总通过率 100%）。",
+  "metrics": [
+    {
+      "metric_id": "M01_anti_hallucination",
+      "name": "反幻觉（极少输入 · D-7）",
+      "target_pass_rate": 1.0,
+      "pass_rate": 1.0,
+      "passed": true,
+      "scenarios": [
+        {
+          "scenario_id": "d7_bad_must_fail",
+          "metric_id": "M01_anti_hallucination",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "ok_for_draft": false,
+            "error_codes": [
+              "UNGROUNDED_CLAIM",
+              "UNGROUNDED_CLAIM",
+              "UNGROUNDED_CLAIM",
+              "UNGROUNDED_CLAIM",
+              "SPARSE_INPUT_EXCESS_OUTPUT"
+            ],
+            "warning_codes": [],
+            "golden_id": "D-7",
+            "variant": "bad"
+          }
+        },
+        {
+          "scenario_id": "d7_good_must_pass",
+          "metric_id": "M01_anti_hallucination",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "ok_for_draft": true,
+            "error_codes": [],
+            "warning_codes": [],
+            "golden_id": "D-7",
+            "variant": "good"
+          }
+        }
+      ]
+    },
+    {
+      "metric_id": "M02_scene_e_dates",
+      "name": "场景E日期占位（D-9）",
+      "target_pass_rate": 1.0,
+      "pass_rate": 1.0,
+      "passed": true,
+      "scenarios": [
+        {
+          "scenario_id": "d9_bad_placeholder",
+          "metric_id": "M02_scene_e_dates",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "ok_for_draft": false,
+            "error_codes": [
+              "SCENE_E_PLACEHOLDER",
+              "SCENE_E_PLACEHOLDER"
+            ],
+            "warning_codes": [
+              "SCENE_E_UNEXPECTED_FIELD",
+              "SCENE_E_UNEXPECTED_FIELD"
+            ],
+            "golden_id": "D-9",
+            "variant": "bad"
+          }
+        },
+        {
+          "scenario_id": "d9_good_no_dates",
+          "metric_id": "M02_scene_e_dates",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "ok_for_draft": true,
+            "error_codes": [],
+            "warning_codes": [],
+            "golden_id": "D-9",
+            "variant": "good"
+          }
+        }
+      ]
+    },
+    {
+      "metric_id": "M03_length_of_stay",
+      "name": "住院天数公式（W07）",
+      "target_pass_rate": 1.0,
+      "pass_rate": 1.0,
+      "passed": true,
+      "scenarios": [
+        {
+          "scenario_id": "los_wrong_days",
+          "metric_id": "M03_length_of_stay",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "ok_for_draft": false,
+            "error_codes": [
+              "LENGTH_OF_STAY_MISMATCH"
+            ],
+            "warning_codes": []
+          }
+        },
+        {
+          "scenario_id": "los_correct_days",
+          "metric_id": "M03_length_of_stay",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "ok_for_draft": true,
+            "error_codes": [],
+            "warning_codes": []
+          }
+        }
+      ]
+    },
+    {
+      "metric_id": "M04_ungrounded_numeric",
+      "name": "数值须有来源（Q07）",
+      "target_pass_rate": 1.0,
+      "pass_rate": 1.0,
+      "passed": true,
+      "scenarios": [
+        {
+          "scenario_id": "numeric_not_in_corpus",
+          "metric_id": "M04_ungrounded_numeric",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "error_codes": [
+              "UNGROUNDED_NUMERIC"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "metric_id": "M05_admission_baseline",
+      "name": "入院记录基线（D-1 / D-2）",
+      "target_pass_rate": 1.0,
+      "pass_rate": 1.0,
+      "passed": true,
+      "scenarios": [
+        {
+          "scenario_id": "d1_pass_no_errors",
+          "metric_id": "M05_admission_baseline",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "ok_for_draft": true,
+            "error_codes": [],
+            "warning_codes": [],
+            "can_sign": true
+          }
+        },
+        {
+          "scenario_id": "d2_conflict_warning",
+          "metric_id": "M05_admission_baseline",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "ok_for_draft": true,
+            "error_codes": [],
+            "warning_codes": [
+              "MISSING_SOURCE_REFS",
+              "CONFLICT_UNRESOLVED"
+            ],
+            "can_sign": true
+          }
+        }
+      ]
+    },
+    {
+      "metric_id": "M06_anti_overdelete_regression",
+      "name": "防误删回归信号（D-8 · 程序层）",
+      "target_pass_rate": 1.0,
+      "pass_rate": 1.0,
+      "passed": true,
+      "scenarios": [
+        {
+          "scenario_id": "d8_good_program_pass",
+          "metric_id": "M06_anti_overdelete_regression",
+          "passed": true,
+          "message": "通过",
+          "detail": {
+            "ok_for_draft": true,
+            "error_codes": [],
+            "warning_codes": [],
+            "golden_id": "D-8",
+            "variant": "good"
+          }
+        },
+        {
+          "scenario_id": "d8_overdelete_detectable",
+          "metric_id": "M06_anti_overdelete_regression",
+          "passed": true,
+          "message": "误删样例应丢失 WBC 7.66",
+          "detail": {
+            "assertion": "overdelete_bad_loses_numeric",
+            "golden_id": "D-8"
+          }
+        }
+      ]
+    }
+  ],
+  "rule_coverage": [
+    {
+      "rule_id": "W02",
+      "name": "宁可不输出绝不编造",
+      "status": "partial",
+      "machine_code": "AI_INVENTED_DIAGNOSIS",
+      "golden": null,
+      "covered_by_metrics": []
+    },
+    {
+      "rule_id": "W03",
+      "name": "逐字段核查来源",
+      "status": "partial",
+      "machine_code": "UNGROUNDED_CLAIM",
+      "golden": null,
+      "covered_by_metrics": [
+        "M01_anti_hallucination"
+      ]
+    },
+    {
+      "rule_id": "W04",
+      "name": "字段非强制凑齐",
+      "status": "planned",
+      "machine_code": "FIELD_NOT_IN_EVIDENCE",
+      "golden": "D-7",
+      "covered_by_metrics": [
+        "SPARSE_INPUT_EXCESS_OUTPUT",
+        "UNGROUNDED_CLAIM",
+        "SCENE_E_PLACEHOLDER",
+        "LENGTH_OF_STAY_MISMATCH",
+        "UNGROUNDED_NUMERIC",
+        "CONFLICT_UNRESOLVED"
+      ]
+    },
+    {
+      "rule_id": "W05",
+      "name": "输出策略矩阵 A-E",
+      "status": "partial",
+      "machine_code": "CONFLICT_UNRESOLVED",
+      "golden": null,
+      "covered_by_metrics": [
+        "M05_admission_baseline"
+      ]
+    },
+    {
+      "rule_id": "W06",
+      "name": "场景E日期字段不输出",
+      "status": "implemented",
+      "machine_code": "SCENE_E_PLACEHOLDER",
+      "golden": null,
+      "covered_by_metrics": [
+        "M02_scene_e_dates"
+      ]
+    },
+    {
+      "rule_id": "W07",
+      "name": "住院天数加一",
+      "status": "implemented",
+      "machine_code": "LENGTH_OF_STAY",
+      "golden": null,
+      "covered_by_metrics": []
+    },
+    {
+      "rule_id": "W12",
+      "name": "科室术语规范",
+      "status": "partial",
+      "machine_code": "DEPARTMENT_TERM_INAPPROPRIATE",
+      "golden": null,
+      "covered_by_metrics": []
+    },
+    {
+      "rule_id": "Q01",
+      "name": "删除无据幻觉",
+      "status": "partial",
+      "machine_code": "UNGROUNDED_CLAIM",
+      "golden": null,
+      "covered_by_metrics": [
+        "M01_anti_hallucination"
+      ]
+    },
+    {
+      "rule_id": "Q03",
+      "name": "字段级无据删整段",
+      "status": "partial",
+      "machine_code": "FIELD_NOT_IN_EVIDENCE",
+      "golden": null,
+      "covered_by_metrics": []
+    },
+    {
+      "rule_id": "Q05",
+      "name": "场景E空值删除",
+      "status": "implemented",
+      "machine_code": "SCENE_E_PLACEHOLDER",
+      "golden": null,
+      "covered_by_metrics": [
+        "M02_scene_e_dates"
+      ]
+    },
+    {
+      "rule_id": "Q07",
+      "name": "数值须有来源",
+      "status": "partial",
+      "machine_code": "UNGROUNDED_NUMERIC",
+      "golden": null,
+      "covered_by_metrics": [
+        "M04_ungrounded_numeric"
+      ]
+    },
+    {
+      "rule_id": "Q08",
+      "name": "诊断治疗医嘱验证",
+      "status": "partial",
+      "machine_code": "UNGROUNDED_CLAIM",
+      "golden": null,
+      "covered_by_metrics": [
+        "M01_anti_hallucination"
+      ]
+    }
+  ],
+  "improvements": [
+    "将 W04 FIELD_NOT_IN_EVIDENCE 从 planned 提升为 implemented，并补充金样例",
+    "Q02 反误删仍以 LLM 为主，程序层可增「删后关键数值缺失」检测",
+    "将 planned 规则程序化（建议从 W04 起），减少 llm_only 兜底"
+  ]
+}

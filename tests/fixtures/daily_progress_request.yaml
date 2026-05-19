@@ -1,0 +1,9 @@
+document_type: daily_progress_note
+department_id: general
+template:
+  template_id: daily_progress_default
+  template_version: "1"
+evidence:
+  asr_final_text: "病程记录：患儿体温正常，咳嗽减轻。观察与处理：继续原治疗，加强护理。"
+  asr_metadata:
+    speaker: physician_only

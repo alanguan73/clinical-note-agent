@@ -1,0 +1,63 @@
+{
+  "document_type": "inpatient_admission",
+  "department_id": "thoracic_surgery",
+  "template": {
+    "template_id": "thoracic_trauma_mva",
+    "template_version": "3",
+    "sections": [
+      { "key": "chief_complaint", "required": true },
+      { "key": "present_illness", "required": true },
+      { "key": "past_history", "required": true },
+      { "key": "physical_exam", "required": true },
+      { "key": "specialist_exam", "required": true },
+      { "key": "auxiliary_exam", "required": true },
+      { "key": "preliminary_diagnosis", "required": false }
+    ]
+  },
+  "draft_note": {
+    "chief_complaint": {
+      "text": "车祸伤后胸痛2小时。",
+      "source_refs": ["asr:final_1"],
+      "source_type": "physician_verbatim",
+      "section_status": "ok"
+    },
+    "present_illness": {
+      "text": "患者于2小时前因交通事故受伤，伤后感胸痛。",
+      "source_refs": ["asr:final_2"],
+      "source_type": "llm_patch",
+      "section_status": "ok"
+    },
+    "past_history": {
+      "text": "否认慢性病史。",
+      "source_refs": ["template:thoracic_trauma_mva"],
+      "source_type": "template_default",
+      "section_status": "ok"
+    },
+    "physical_exam": {
+      "text": "右侧呼吸音减弱，无皮下气肿。",
+      "source_refs": ["asr:final_3"],
+      "source_type": "physician_verbatim",
+      "section_status": "ok"
+    },
+    "specialist_exam": {
+      "text": "胸廓对称，呼吸运动可。",
+      "source_refs": ["template:thoracic_trauma_mva"],
+      "source_type": "template_default",
+      "section_status": "ok"
+    },
+    "auxiliary_exam": {
+      "text": "白细胞 12.5×10^9/L；CT：右侧第5肋骨折。",
+      "source_refs": ["lis:ord_1001", "pacs:stu_2001"],
+      "source_type": "fact",
+      "section_status": "ok"
+    },
+    "preliminary_diagnosis": {
+      "text": "肋骨骨折？",
+      "source_refs": ["asr:final_8"],
+      "source_type": "physician_verbatim",
+      "section_status": "ok",
+      "locked": true
+    }
+  },
+  "conflicts": []
+}

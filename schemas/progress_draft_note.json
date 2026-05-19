@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clinical-note-agent/schemas/progress_draft_note.json",
+  "title": "ProgressDraftNote",
+  "description": "首次病程 / 上级查房 / 日常病程 draft_note（各节复用 draft_note_section.json）",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "draft_note_section.json"
+  }
+}

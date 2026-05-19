@@ -1,0 +1,60 @@
+# 评估计划模板（规划阶段填写，禁止写具体正则/实现细节）
+#
+# 用法：
+#   cp evaluation/plans/template.evaluation_plan.yaml evaluation/plans/my_plan.yaml
+#   # 编辑 my_plan.yaml 后执行
+#   note-eval evaluation/plans/my_plan.yaml -m report.md -o report.json
+
+evaluation_plan:
+  id: my-qc-evaluation
+  version: "YYYY-MM-DD"
+  name: 质控评估（请填写名称）
+  scope:
+    - discharge_summary
+    # - inpatient_admission
+
+  # 分析架构（规划阶段锁定，不写实现）
+  architecture:
+    - evidence_corpus
+    - program_qc
+    - llm_qc
+    - final_program_qc
+
+  # 核心指标：每轮 3–5 项，绑定 machine_code + 金样例/夹具
+  core_metrics:
+    - id: M01_example
+      name: 示例指标名称
+      target_pass_rate: 1.0
+      machine_codes:
+        - EXAMPLE_ERROR_CODE
+      scenarios:
+        - id: example_bad
+          type: discharge_golden
+          golden: tests/golden/D-7-minimal-input-anti-hallucination.yaml
+          variant: bad
+          expect:
+            ok_for_draft: false
+            must_have_errors:
+              - SPARSE_INPUT_EXCESS_OUTPUT
+        - id: example_good
+          type: discharge_golden
+          golden: tests/golden/D-7-minimal-input-anti-hallucination.yaml
+          variant: good
+          expect:
+            ok_for_draft: true
+            errors_empty: true
+
+  scoring:
+    pass_threshold: 1.0
+
+  rule_coverage:
+    catalog_path: rules/prompt_catalog/discharge_prompt_rules.yaml
+    track_status:
+      - implemented
+      - partial
+      - llm_only
+      - planned
+
+  # 可选：规划阶段手写改进方向（执行后会与自动建议合并）
+  # improvements:
+  #   - 下轮优先实现 W04 FIELD_NOT_IN_EVIDENCE

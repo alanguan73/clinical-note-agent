@@ -1,0 +1,10 @@
+# 日常病程记录
+version: "1.0.0"
+document_type: daily_progress_note
+
+default_required_sections:
+  - daily_course
+
+physician_only_sections: []
+
+sections_requiring_source_refs: []

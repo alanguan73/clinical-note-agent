@@ -1,0 +1,18 @@
+template_id: senior_round_default
+template_version: "1"
+document_type: senior_round_note
+department_id: general
+
+sections:
+  - key: round_record
+    title: 查房记录
+    required: true
+    default_text: ""
+  - key: round_opinion
+    title: 查房意见
+    required: true
+    default_text: ""
+  - key: treatment_plan
+    title: 诊疗计划
+    required: true
+    default_text: ""

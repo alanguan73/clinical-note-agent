@@ -1,0 +1,61 @@
+# 五种病历类型覆盖评估（结构化四类 + 出院流水线引用）
+#
+#   note-eval evaluation/plans/sample.five_document_types.yaml
+
+evaluation_plan:
+  id: five-document-types
+  version: "2026-05-19"
+  name: 五种病历生成与质控覆盖
+  scope:
+    - inpatient_admission
+    - discharge_summary
+    - first_progress_note
+    - senior_round_note
+    - daily_progress_note
+
+  architecture:
+    - 入院/病程 SSE → stream_note_generate()
+    - 出院 → run_discharge_pipeline()
+
+  core_metrics:
+    - id: M10_first_progress
+      name: 首次病程生成与质控
+      target_pass_rate: 1.0
+      machine_codes: []
+      scenarios:
+        - id: first_progress_stream
+          type: note_generate_fixture
+          fixture: tests/fixtures/first_progress_request.yaml
+          expect:
+            ok_for_draft: true
+            errors_empty: true
+            must_have_sections:
+              - course_summary
+              - treatment_plan
+
+    - id: M11_senior_round
+      name: 上级医师查房生成与质控
+      target_pass_rate: 1.0
+      machine_codes: []
+      scenarios:
+        - id: senior_round_stream
+          type: note_generate_fixture
+          fixture: tests/fixtures/senior_round_request.yaml
+          expect:
+            ok_for_draft: true
+            errors_empty: true
+
+    - id: M12_daily_progress
+      name: 日常病程生成与质控
+      target_pass_rate: 1.0
+      machine_codes: []
+      scenarios:
+        - id: daily_progress_stream
+          type: note_generate_fixture
+          fixture: tests/fixtures/daily_progress_request.yaml
+          expect:
+            ok_for_draft: true
+            errors_empty: true
+
+  scoring:
+    pass_threshold: 1.0

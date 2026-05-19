@@ -1,0 +1,34 @@
+template_id: discharge_default
+template_version: "1"
+document_type: discharge_summary
+department_id: general
+
+# 出院记录正文由 pipeline 生成（中文 flat JSON），此处为配置占位与字段说明
+sections:
+  - key: admission_date
+    title: 入院日期
+    required: false
+  - key: discharge_date
+    title: 出院日期
+    required: false
+  - key: length_of_stay
+    title: 住院天数
+    required: false
+  - key: admission_status
+    title: 入院情况
+    required: true
+  - key: admission_diagnosis
+    title: 入院诊断
+    required: true
+  - key: course_summary
+    title: 诊疗经过
+    required: true
+  - key: discharge_status
+    title: 出院情况
+    required: true
+  - key: discharge_diagnosis
+    title: 出院诊断
+    required: true
+  - key: discharge_orders
+    title: 出院医嘱
+    required: true

@@ -1,0 +1,171 @@
+# 样例评估计划：出院 + 入院质控基线（可直接运行）
+#
+#   note-eval evaluation/plans/sample.discharge_admission_qc.yaml
+#   note-eval evaluation/plans/sample.discharge_admission_qc.yaml \
+#     -o evaluation/samples/sample_report.json \
+#     -m evaluation/samples/sample_report.md
+
+evaluation_plan:
+  id: discharge-admission-qc-baseline
+  version: "2026-05-19"
+  name: 出院入院质控基线评估
+  scope:
+    - discharge_summary
+    - inpatient_admission
+
+  architecture:
+    - evidence_corpus → build_evidence_corpus()
+    - 入院 program_qc → run_compliance()（Schema + rules + RAG）
+    - 出院 program_qc → run_discharge_compliance()（validate + grounding）
+    - 出院 llm_qc → run_llm_qc_stage()（句级语义，本计划不执行 LLM）
+    - 出院 final_program_qc → 终审程序 QC
+
+  core_metrics:
+    - id: M01_anti_hallucination
+      name: 反幻觉（极少输入 · D-7）
+      target_pass_rate: 1.0
+      machine_codes:
+        - SPARSE_INPUT_EXCESS_OUTPUT
+        - UNGROUNDED_CLAIM
+      scenarios:
+        - id: d7_bad_must_fail
+          type: discharge_golden
+          golden: tests/golden/D-7-minimal-input-anti-hallucination.yaml
+          variant: bad
+          expect:
+            ok_for_draft: false
+            must_have_errors:
+              - SPARSE_INPUT_EXCESS_OUTPUT
+              - UNGROUNDED_CLAIM
+        - id: d7_good_must_pass
+          type: discharge_golden
+          golden: tests/golden/D-7-minimal-input-anti-hallucination.yaml
+          variant: good
+          expect:
+            ok_for_draft: true
+            errors_empty: true
+
+    - id: M02_scene_e_dates
+      name: 场景E日期占位（D-9）
+      target_pass_rate: 1.0
+      machine_codes:
+        - SCENE_E_PLACEHOLDER
+      scenarios:
+        - id: d9_bad_placeholder
+          type: discharge_golden
+          golden: tests/golden/D-9-scene-e-dates.yaml
+          variant: bad
+          expect:
+            ok_for_draft: false
+            must_have_errors:
+              - SCENE_E_PLACEHOLDER
+        - id: d9_good_no_dates
+          type: discharge_golden
+          golden: tests/golden/D-9-scene-e-dates.yaml
+          variant: good
+          expect:
+            ok_for_draft: true
+            errors_empty: true
+
+    - id: M03_length_of_stay
+      name: 住院天数公式（W07）
+      target_pass_rate: 1.0
+      machine_codes:
+        - LENGTH_OF_STAY_MISMATCH
+      scenarios:
+        - id: los_wrong_days
+          type: discharge_inline
+          output:
+            入院日期: "2025-01-08"
+            出院日期: "2025-01-12"
+            住院天数: "4天"
+          evidence_corpus: "入院 2025-01-08 出院 2025-01-12"
+          evidence_flags:
+            admission_date: true
+            discharge_date: true
+            length_of_stay: true
+          expect:
+            must_have_errors:
+              - LENGTH_OF_STAY_MISMATCH
+        - id: los_correct_days
+          type: discharge_inline
+          output:
+            入院日期: "2025-01-08"
+            出院日期: "2025-01-12"
+            住院天数: "5天"
+          evidence_corpus: "x"
+          evidence_flags:
+            admission_date: true
+            discharge_date: true
+            length_of_stay: true
+          expect:
+            must_not_have_errors:
+              - LENGTH_OF_STAY_MISMATCH
+
+    - id: M04_ungrounded_numeric
+      name: 数值须有来源（Q07）
+      target_pass_rate: 1.0
+      machine_codes:
+        - UNGROUNDED_NUMERIC
+      scenarios:
+        - id: numeric_not_in_corpus
+          type: grounding_inline
+          output:
+            诊疗经过: "白细胞 99.9×10^9/L"
+          evidence_corpus: "白细胞 12.5×10^9/L"
+          expect:
+            must_have_errors:
+              - UNGROUNDED_NUMERIC
+
+    - id: M05_admission_baseline
+      name: 入院记录基线（D-1 / D-2）
+      target_pass_rate: 1.0
+      machine_codes:
+        - CONFLICT_UNRESOLVED
+      scenarios:
+        - id: d1_pass_no_errors
+          type: admission_fixture
+          fixture: tests/fixtures/d1_draft_pass.json
+          expect:
+            ok_for_draft: true
+            errors_empty: true
+        - id: d2_conflict_warning
+          type: admission_fixture
+          fixture: tests/fixtures/d2_conflict_warning.json
+          expect:
+            ok_for_draft: true
+            can_sign: true
+            blocks_sign_on_conflict: false
+            must_have_warnings:
+              - CONFLICT_UNRESOLVED
+
+    - id: M06_anti_overdelete_regression
+      name: 防误删回归信号（D-8 · 程序层）
+      target_pass_rate: 1.0
+      machine_codes: []
+      scenarios:
+        - id: d8_good_program_pass
+          type: discharge_golden
+          golden: tests/golden/D-8-rich-input-no-overdelete.yaml
+          variant: good
+          expect:
+            ok_for_draft: true
+            errors_empty: true
+        - id: d8_overdelete_detectable
+          type: golden_assertion
+          golden: tests/golden/D-8-rich-input-no-overdelete.yaml
+          assertion: overdelete_bad_loses_numeric
+
+  scoring:
+    pass_threshold: 1.0
+
+  rule_coverage:
+    catalog_path: rules/prompt_catalog/discharge_prompt_rules.yaml
+    track_status:
+      - implemented
+      - partial
+      - planned
+
+  improvements:
+    - 将 W04 FIELD_NOT_IN_EVIDENCE 从 planned 提升为 implemented，并补充金样例
+    - Q02 反误删仍以 LLM 为主，程序层可增「删后关键数值缺失」检测

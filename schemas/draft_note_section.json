@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clinical-note-agent/schemas/draft_note_section.json",
+  "title": "DraftNoteSection",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "text": { "type": ["string", "null"] },
+    "verbatim": { "type": "string" },
+    "normalized": { "type": "string" },
+    "source_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "template_default",
+        "fact",
+        "physician_verbatim",
+        "llm_patch"
+      ]
+    },
+    "section_status": {
+      "type": "string",
+      "enum": ["ok", "degraded", "failed"]
+    },
+    "locked": { "type": "boolean" },
+    "display_mode": { "type": "string" },
+    "candidates": { "type": "array" },
+    "gaps": { "type": "array" }
+  }
+}

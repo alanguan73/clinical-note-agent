@@ -1,0 +1,14 @@
+template_id: daily_progress_default
+template_version: "1"
+document_type: daily_progress_note
+department_id: general
+
+sections:
+  - key: daily_course
+    title: 病程记录
+    required: true
+    default_text: ""
+  - key: observation_treatment
+    title: 观察与处理
+    required: false
+    default_text: ""

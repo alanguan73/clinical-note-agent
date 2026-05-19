@@ -1,0 +1,9 @@
+document_type: senior_round_note
+department_id: general
+template:
+  template_id: senior_round_default
+  template_version: "1"
+evidence:
+  asr_final_text: "查房记录：患儿精神可，体温正常。查房意见：继续目前抗感染方案。诊疗计划：明日复查血常规。"
+  asr_metadata:
+    speaker: physician_only

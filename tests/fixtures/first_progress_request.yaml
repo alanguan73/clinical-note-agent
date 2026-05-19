@@ -1,0 +1,9 @@
+document_type: first_progress_note
+department_id: general
+template:
+  template_id: first_progress_default
+  template_version: "1"
+evidence:
+  asr_final_text: "病例特点：患儿因发热2天入院，查体咽充血。拟诊讨论：上呼吸道感染可能。诊疗计划：抗感染及对症支持。"
+  asr_metadata:
+    speaker: physician_only
